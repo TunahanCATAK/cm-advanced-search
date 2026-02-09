@@ -1,7 +1,9 @@
 #pragma once
 
+#include "entity.h"
+
 #pragma pack(push, 1)
-struct Index {
+struct Index : public Entity {
     std::array<char, 51> file_name;         // 0..50
     int32_t id;                             // 51..53
     uint32_t table_size;                    // 54..57

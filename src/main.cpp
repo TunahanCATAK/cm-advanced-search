@@ -1,13 +1,23 @@
 #include <iostream>
+#include <ranges> 
+#include <algorithm> 
 
 #include "club_repository.h"
 #include "staff_repository.h"
 #include "first_name_repository.h"
 #include "index_repository.h"
 
+#include "repository.h"
+#include "second_name.h"
+
 int main() {
 
-    IndexRepository ir("/Users/tcatak/Documents/repos/cm-advanced-search/data/v2/index2.dat");
+    // TODO: Move these repo related codes to the repository lib 
+    // make a dbset class to set these db related mechanisms.
+
+    constexpr size_t INDEX_HEADER_OFFSET = 8;
+
+    Repository<Index> ir("/Users/tcatak/Documents/repos/cm-advanced-search/data/v2/index2.dat", INDEX_HEADER_OFFSET);
     auto indexList = ir.GetAll();
     if (!indexList.has_value())
         return -1;
@@ -19,48 +29,47 @@ int main() {
     }
     std::cout << "===============\n";
 
+    Repository<Club> clubRepository("/Users/tcatak/Documents/repos/cm-advanced-search/data/v2/club.dat");
+    auto club244 = clubRepository.GetById(245);
+    if (club244.has_value())
+    {
+        Club cb244 = club244.value();
 
+        std::cout << cb244 << "\n";
+    }
 
-    ClubRepository cr("/Users/tcatak/Documents/repos/cm-advanced-search/data/v2/club.dat"); 
-
-    auto x = cr.GetById(244);
-    if (!x.has_value())
-        return -1;
-    Club club = x.value();
-
-    std::cout << club << std::endl;
-
-
-    // auto y = cr.SearchByName("real"); 
-    // if (!y.has_value())
-    //     return -1;
-    // std::vector<Club> clubs = y.value();
-
-    // for (const auto& club : clubs) {
-    //     std::cout << club << std::endl;
-    // }
-
-    StaffRepository sr("/Users/tcatak/Documents/repos/cm-advanced-search/data/v2/staff.dat");
-
-    // auto y = sr.GetById(132722);
-    auto y = sr.GetById(89037);
+    // find the staff index: 
+    auto staffInd = std::ranges::find_if(
+        indexList.value(),
+        [](const auto& ind) {
+            std::string_view name(ind.file_name.data());
+            return name == "staff.dat";
+        }
+    );
+    Repository<Staff> staffRepository("/Users/tcatak/Documents/repos/cm-advanced-search/data/v2/staff.dat", 
+                                    staffInd->offset, 
+                                    staffInd->table_size);
+    
+    auto y = staffRepository.GetById(89037);
     if (!y.has_value())
         return -1;
     Staff staff = y.value();
 
     std::cout << staff << std::endl;
 
-
-    FirstNameRepository fnr("/Users/tcatak/Documents/repos/cm-advanced-search/data/v2/first_names.dat");
+    Repository<FirstName> fnr("/Users/tcatak/Documents/repos/cm-advanced-search/data/v2/first_names.dat");
     auto z = fnr.GetById(61);
-    std::cout << z.value() << std::endl; 
+    std::cout << name_as_string(z.value()) << std::endl; 
 
     z = fnr.GetById(6997);
-    std::cout << z.value() << std::endl; 
+    std::cout << name_as_string(z.value()) << std::endl; 
 
     z = fnr.GetById(32052);
-    std::cout << z.value() << std::endl;
+    std::cout << name_as_string(z.value()) << std::endl;
 
+    Repository<SecondName> snr("/Users/tcatak/Documents/repos/cm-advanced-search/data/v2/second_names.dat");
+    auto t = snr.GetById(37055);
+    std::cout << name_as_string(t.value()) << std::endl; 
 
     return 0;
 }

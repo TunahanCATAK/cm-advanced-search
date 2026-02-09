@@ -4,7 +4,7 @@
 #include "entity.h"
 
 #pragma pack(push, 1)
-struct FirstName : public Entity
+struct SecondName : public Entity
 {
     std::array<std::uint8_t, 51> Name; // 51 bytes
     std::int32_t id;                   // C# int -> 32-bit signed
@@ -13,7 +13,7 @@ struct FirstName : public Entity
 };
 #pragma pack(pop)
 
-inline std::string name_as_string(const FirstName& n)
+inline std::string name_as_string(const SecondName& n)
 {
     const auto* p = reinterpret_cast<const char*>(n.Name.data());
     size_t len = 0;

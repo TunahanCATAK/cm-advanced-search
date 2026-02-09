@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 
+#include "entity.h"
 
 #pragma pack(push, 1)
 struct CMDate
@@ -14,7 +15,7 @@ struct CMDate
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-struct Staff
+struct Staff : public Entity
 {
     std::int32_t id;                    // 0..3
     std::int32_t FirstName;             // 4..7

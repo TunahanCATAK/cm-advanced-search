@@ -5,8 +5,10 @@
 #include <ostream>
 #include <string_view>
 
+#include "entity.h"
+
 #pragma pack(push, 1)
-struct Club {
+struct Club : public Entity {
     int32_t id;                              // 0..3
     std::array<char, 51> long_name;          // 4..54
     uint8_t long_name_gender;                // 55
